@@ -204,12 +204,10 @@ void MapHandler::findCarSpawnPoints()
 	}
     for (int row = 0; row < roadMap.size(); row++)
     {
-        // Check leftmost column for spawn points
         if (roadMap[row][0] == 3 || roadMap[row][0] == 4)
         {
             carSpawnPoints.push_back(sf::Vector2i(0, row));
         }
-        // Check rightmost column for spawn points
         if (roadMap[row][roadMap[0].size() - 1] == 3 || roadMap[row][roadMap[0].size() - 1] == 4)
         {
             carSpawnPoints.push_back(sf::Vector2i(roadMap[0].size() - 1, row));
@@ -253,9 +251,6 @@ void MapHandler::displayRoadMap()
     }
 }
 
-
-
-
 std::vector<std::vector<unsigned int>> MapHandler::getSpriteMap()
 {
 	return spriteMap;
@@ -270,19 +265,18 @@ void MapHandler::displayRoadMapGrid(sf::RenderWindow& window, const std::string 
 {
     const int offsetX = 53;
     const int offsetY = 50;
-    const int cellSize = 10; // Each cell is 10x10 pixels
+    const int cellSize = 10; 
     sf::Font font;
-    font.loadFromFile(fontPath); // Load the font
+    font.loadFromFile(fontPath);
     for (size_t y = 0; y < roadMap.size(); ++y) {
         for (size_t x = 0; x < roadMap[y].size(); ++x) {
             sf::Text text;
-            text.setFont(font); // Set the font
-            text.setString(std::to_string(roadMap[y][x])); // Set the string to the roadMap value
-            text.setCharacterSize(10); // Set the character size to fit the cell
-            text.setFillColor(sf::Color::White); // Set text color
-            text.setPosition(offsetX + x * cellSize, offsetY + y * cellSize); // Position based on the cell and offset
-
-            window.draw(text); // Draw the text on the window
+            text.setFont(font); 
+            text.setString(std::to_string(roadMap[y][x])); 
+            text.setCharacterSize(10);
+            text.setFillColor(sf::Color::White);
+            text.setPosition(offsetX + x * cellSize, offsetY + y * cellSize); 
+            window.draw(text); 
         }
     }
 }

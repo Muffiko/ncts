@@ -14,22 +14,22 @@ Car::Car(sf::Vector2i position, Direction direction, std::shared_ptr<std::vector
 	if (carDirection == Direction::UP)
 	{
 		carSprite.setRotation(0);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 1);
+		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3);
 	}
 	else if (carDirection == Direction::DOWN)
 	{
 		carSprite.setRotation(180);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f );
+		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.0f + 3);
 	}
 	else if (carDirection == Direction::LEFT)
 	{
 		carSprite.setRotation(-90);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness -  carTexture.getSize().y / 2.f, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f);
+		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
 	}
 	else if (carDirection == Direction::RIGHT)
 	{
 		carSprite.setRotation(90);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.f , carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f);
+		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.f + 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
 	}
 	
 	carSprite.setPosition(carCurrentSpritePosition.x, carCurrentSpritePosition.y);

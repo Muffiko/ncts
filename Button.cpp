@@ -134,8 +134,6 @@ void Button::setButtonOutlineThickness(float thickness)
 	buttonOutlineThickness = thickness;
 }
 
-
-
 void StopButton::onClick()
 {
 	if (simRun) 

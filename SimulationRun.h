@@ -21,11 +21,13 @@ class SimulationRun
 {
 public:
 	sf::RenderWindow window;
-	void runSimulation();
 	std::vector<std::unique_ptr<DynamicObject>> buttonObjects;
 	std::vector<std::unique_ptr<StaticObject>> staticObjects;
 	std::vector<std::unique_ptr<DynamicObject>> carObjects;
 	bool isRunning = true;
+
+public:
+	void runSimulation();
 
 private:
 	Settings& settings = Settings::getInstance();

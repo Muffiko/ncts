@@ -13,7 +13,7 @@ protected:
 	SimulationRun* simRun = nullptr;
 
 public:
-
+	Settings& settings = Settings::getInstance();
 	Button(std::string text, std::string fontPath, sf::Vector2f position, SimulationRun* simRun);
 	void update(sf::RenderWindow& window) override;
 	void draw(sf::RenderWindow& window) override;
@@ -35,7 +35,7 @@ public:
 	void setButtonOutlineThickness(float thickness);
 
 protected:
-	Settings& settings = Settings::getInstance();
+
 	unsigned int fontSize = 12;
 	sf::Font buttonFont;
 	sf::Text buttonText;

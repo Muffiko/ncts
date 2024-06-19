@@ -49,11 +49,7 @@ void SimulationRun::createStaticObjects(std::vector<std::vector<unsigned int>> s
 
 void SimulationRun::createDynamicObjects(std::shared_ptr<std::vector<std::vector<unsigned int>>> roadMap)
 {
-	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54,79), Direction::UP, roadMap, 2.0f));
-	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54, 79), Direction::UP, roadMap, 2.0f));
-	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54, 79), Direction::UP, roadMap, 3.0f));
-	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54, 79), Direction::UP, roadMap, 1.2f));
-	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(18, 0), Direction::DOWN, roadMap, 0.5f));
+	//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 21), Direction::RIGHT, roadMap, 0.5f, getRandomCarAsset()));
 }
 
 void SimulationRun::drawStaticObjects(sf::RenderWindow& window)
@@ -78,7 +74,6 @@ void SimulationRun::drawDynamicObjects(sf::RenderWindow& window)
 
 void SimulationRun::updateDynamicObjects(sf::RenderWindow& window)
 {
-	// Step 1: Identify cars that are out of bounds
 	std::vector<std::unique_ptr<DynamicObject>>::iterator it = carObjects.begin();
 	while (it != carObjects.end())
 	{
@@ -103,30 +98,36 @@ void SimulationRun::createMoreCars(MapHandler mapH)
 	{
 		for (int i = 0; i < 30 - carObjects.size(); i++)
 		{
+
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 21), Direction::RIGHT, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 22), Direction::RIGHT, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(135, 57), Direction::LEFT, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(135, 58), Direction::LEFT, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(17, 0), Direction::DOWN, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(18, 0), Direction::DOWN, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(53, 79), Direction::UP, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			//carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54, 79), Direction::UP, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), 2.0f, getRandomCarAsset()));
+			
 			std::vector<sf::Vector2i> carSpawnPoints = mapH.getCarSpawnPoints();
 			int randomIndex = rand() % carSpawnPoints.size();
 			float randomSpeed = (rand() % 21) / 10.0f + 2.0f;
-			Direction setDirection = Direction::UP; // Default direction
+			Direction setDirection = Direction::UP; 
 
 			sf::Vector2i spawnPoint = carSpawnPoints[randomIndex];
 			int roadTile = mapH.getRoadMap()[spawnPoint.y][spawnPoint.x];
 
-			// Check if the car is spawned at the top border
 			if (spawnPoint.y == 0)
 			{
 				setDirection = Direction::DOWN;
 			}
-			// Check if the car is spawned at the bottom border
 			else if (spawnPoint.y == mapH.getRoadMap().size() - 1)
 			{
 				setDirection = Direction::UP;
 			}
-			// Check if the car is spawned at the left border
 			else if (spawnPoint.x == 0)
 			{
 				setDirection = Direction::RIGHT;
 			}
-			// Check if the car is spawned at the right border
 			else if (spawnPoint.x == mapH.getRoadMap()[0].size() - 1)
 			{
 				setDirection = Direction::LEFT;
@@ -139,7 +140,6 @@ void SimulationRun::createMoreCars(MapHandler mapH)
 
 std::string getRandomCarAsset() 
 {
-	// List of car asset paths
 	std::vector<std::string> carAssets = {
 		"assets/basic_car1.png",
 		"assets/basic_car2.png",
@@ -157,22 +157,18 @@ std::string getRandomCarAsset()
 	return carAssets[distr(gen)];
 }
 
-
-
-
-
 void SimulationRun::runSimulation()
 {
 	srand(time(NULL));
 	MapHandler mapHandler("map.txt");
 	mapHandler.convertSpriteMap();
-
 	initializeWindow();
 	createButtonObjects();
 	createStaticObjects(mapHandler.getSpriteMap());
 	mapHandler.convertSpriteMapToRoadMap();
 	mapHandler.findCarSpawnPoints();
 	createDynamicObjects(std::make_shared<std::vector<std::vector<unsigned int>>>(mapHandler.getRoadMap()));
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -190,10 +186,7 @@ void SimulationRun::runSimulation()
 		//drawButtonObjects(window);
 		drawDynamicObjects(window);
 		if (isRunning) updateDynamicObjects(window);
-
-		//mapHandler.displayRoadMapGrid(window, "arial.ttf");
-
 		window.display();
-		if (carObjects.size() < 10)createMoreCars(mapHandler);
+		if (carObjects.size() < 30)createMoreCars(mapHandler);
 	}
 }

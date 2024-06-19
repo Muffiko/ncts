@@ -11,9 +11,11 @@ void Road::setRoadSprite()
         filename = "assets/empty2.png";
         break;
     case RoadTypes::VerticalRoad:
+        //filename = "assets/debug.png";
         filename = "assets/vertical_road2.png";
         break;
     case RoadTypes::HorizontalRoad:
+        //filename = "assets/debug.png";
         filename = "assets/horizontal_road2.png";
         break;
     case RoadTypes::TopLeftCorner:
@@ -54,7 +56,6 @@ void Road::setRoadSprite()
     }
     roadSprite.setTexture(roadTexture);
 }
-
 
 Road::Road(sf::Vector2f position, RoadTypes roadType) : position(position), roadType(roadType)
 {
