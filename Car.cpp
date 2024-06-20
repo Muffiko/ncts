@@ -15,21 +15,53 @@ Car::Car(sf::Vector2i position, Direction direction, std::shared_ptr<std::vector
 	{
 		carSprite.setRotation(0);
 		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3);
+		if (carCurrentPositionPoint.x % 2 == 0)
+		{
+			carCurrentSpritePosition.x += 3;
+		}
+		else
+		{
+			carCurrentSpritePosition.x -= 2;
+		}
 	}
 	else if (carDirection == Direction::DOWN)
 	{
 		carSprite.setRotation(180);
 		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.0f + 3);
+		if (carCurrentPositionPoint.x % 2 == 0)
+		{
+			carCurrentSpritePosition.x += 3;
+		}
+		else
+		{
+			carCurrentSpritePosition.x -= 2;
+		}
 	}
 	else if (carDirection == Direction::LEFT)
 	{
 		carSprite.setRotation(-90);
 		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
+		if (carCurrentPositionPoint.y % 2 == 0)
+		{
+			carCurrentSpritePosition.y += 3;
+		}
+		else
+		{
+			carCurrentSpritePosition.y -= 2;
+		}
 	}
 	else if (carDirection == Direction::RIGHT)
 	{
 		carSprite.setRotation(90);
 		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.f + 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
+		if (carCurrentPositionPoint.y % 2 == 0)
+		{
+			carCurrentSpritePosition.y += 3;
+		}
+		else
+		{
+			carCurrentSpritePosition.y -= 2;
+		}
 	}
 	
 	carSprite.setPosition(carCurrentSpritePosition.x, carCurrentSpritePosition.y);
@@ -307,6 +339,7 @@ sf::Sprite &Car::getCarSprite()
 {
 	return carSprite;
 }
+
 
 
 
