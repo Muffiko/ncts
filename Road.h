@@ -2,6 +2,7 @@
 #include "StaticObject.h"
 #include "RoadTypes.h"
 #include <SFML/Graphics/Texture.hpp>
+#include <iostream>
 
 class Road : public StaticObject
 {
@@ -15,6 +16,5 @@ private:
 
 public:
     Road(sf::Vector2f position, RoadTypes roadType);
-
     void draw(sf::RenderWindow& window) override;
 };

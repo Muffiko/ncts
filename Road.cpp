@@ -8,7 +8,7 @@ void Road::setRoadSprite()
     switch (roadType)
     {
     case RoadTypes::Empty:
-        filename = "assets/empty2.png";
+        filename = "assets/empty3.png";
         break;
     case RoadTypes::VerticalRoad:
         //filename = "assets/debug.png";

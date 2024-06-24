@@ -54,6 +54,12 @@
     <ClCompile Include="BasicCar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StatsDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimulationRun.h">
@@ -93,6 +99,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasicCar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StatsDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

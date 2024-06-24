@@ -77,3 +77,67 @@ public:
 	using Button::Button;
 	void onClick() override;
 };
+
+class ScaleButtonMinus : public Button
+{
+	using Button::Button;
+	void onClick() override;
+
+};
+
+class SpeedButtonPlus : public Button
+{
+	using Button::Button;
+	void onClick() override;
+
+};
+
+class SpeedButtonMinus : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class SpeedButtonRandom : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class NumberOfCarsButtonPlus : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class NumberOfCarsButtonMinus : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class MapEditorButton : public Button
+{
+public:
+	using Button::Button;
+	void onClick() override;
+};
+
+class MapEditorSaveButton : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class MapEditorLoadButton : public Button
+{
+	using Button::Button;
+	void onClick() override;
+};
+
+class MapEditorMapButton : public Button
+{
+	using Button::Button;
+	void onClick() override;
+	const sf::Vector2i getGridPosition(const sf::Vector2f& pixelPosition);
+};

@@ -19,5 +19,6 @@ public:
     std::unordered_map<RoadTypes, std::vector<std::vector<unsigned int>>> patterns;
     std::unordered_map<int, std::vector<Direction>> possibleTurnDirections;
 
+
     static RoadPatterns& getInstance(); 
 };

@@ -24,6 +24,14 @@ public:
 	sf::Vector2f buttonSize = sf::Vector2f(80.f, 30.f);
 	sf::Vector2f StartButtonPosition = sf::Vector2f(windowSize.x-((windowSize.x-simulationBorderSize.x)/2.f)-(buttonSize.x/4.f), simulationBorderOffset);
     sf::Vector2f StopButtonPosition = sf::Vector2f(StartButtonPosition.x, StartButtonPosition.y + buttonSize.y + 10);
+    std::shared_ptr<sf::Font> font;
 private:
-    Settings() {} // Private constructor
+    Settings() 
+    {
+        font = std::make_shared<sf::Font>();
+        if (!font->loadFromFile("arial.ttf"))
+        {
+			throw std::runtime_error("Could not load font");
+		}
+    }
 };

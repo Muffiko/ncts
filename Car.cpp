@@ -1,141 +1,240 @@
 #include "Car.h"
 
+std::vector<PositionInfo> Car::currentPositions = {};
+std::vector<PositionInfo> Car::nextPositions = {};
+
 Car::Car(sf::Vector2i position, Direction direction, std::shared_ptr<std::vector<std::vector<unsigned int>>> roadMap, float speed, std::string carTexturePath) : p_roadMap(roadMap)
 {
 	
 	carTexture.loadFromFile(carTexturePath);
 	carSprite.setTexture(carTexture);
 	carSprite.setOrigin((sf::Vector2f)carTexture.getSize() / 2.0f);
-	carSprite.setScale(1, 1);
-	carCurrentPositionPoint = position;
+	
 	carDirection = direction;
 	carNextDirection = direction;
 	carTurnDirection = Direction::RIGHT;
-	if (carDirection == Direction::UP)
-	{
-		carSprite.setRotation(0);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3);
-		if (carCurrentPositionPoint.x % 2 == 0)
-		{
-			carCurrentSpritePosition.x += 3;
-		}
-		else
-		{
-			carCurrentSpritePosition.x -= 2;
-		}
-	}
-	else if (carDirection == Direction::DOWN)
-	{
-		carSprite.setRotation(180);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.f - 2, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.0f + 3);
-		if (carCurrentPositionPoint.x % 2 == 0)
-		{
-			carCurrentSpritePosition.x += 3;
-		}
-		else
-		{
-			carCurrentSpritePosition.x -= 2;
-		}
-	}
-	else if (carDirection == Direction::LEFT)
-	{
-		carSprite.setRotation(-90);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness - 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
-		if (carCurrentPositionPoint.y % 2 == 0)
-		{
-			carCurrentSpritePosition.y += 3;
-		}
-		else
-		{
-			carCurrentSpritePosition.y -= 2;
-		}
-	}
-	else if (carDirection == Direction::RIGHT)
-	{
-		carSprite.setRotation(90);
-		carCurrentSpritePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().y / 2.f + 3, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness + carTexture.getSize().x / 2.0f - 2);
-		if (carCurrentPositionPoint.y % 2 == 0)
-		{
-			carCurrentSpritePosition.y += 3;
-		}
-		else
-		{
-			carCurrentSpritePosition.y -= 2;
-		}
-	}
-	
-	carSprite.setPosition(carCurrentSpritePosition.x, carCurrentSpritePosition.y);
+	carSetSpawnPosition(position);
 	nextPositionPoint = carCurrentPositionPoint;
 	carSpeed = speed;
 	isMoving = false;
+	carOriginalSpeed = speed;
+	carPreviousPositionPoint = carCurrentPositionPoint;
+	carSprite.setScale(0.8, 0.8);
+}
 
+void Car::carSetSpawnPosition(sf::Vector2i position)
+{
+	carSprite.setOrigin((sf::Vector2f)carTexture.getSize() / 2.0f);
+	carCurrentPositionPoint = position;
+	float rotation = 0;
+	sf::Vector2f offsetAdjustment(0.f, 0.f);
+
+	switch (carDirection) 
+	{
+	case Direction::UP:
+            rotation = 0;
+			offsetAdjustment = sf::Vector2f(carTexture.getSize().x / 2.f - 2, -3);
+            break;
+	case Direction::DOWN:
+            rotation = 180;
+			offsetAdjustment = sf::Vector2f(carTexture.getSize().x / 2.f - 2, carTexture.getSize().y / 2.0f + 3);
+            break;
+	case Direction::LEFT:
+            rotation = -90;
+			offsetAdjustment = sf::Vector2f(carTexture.getSize().y / 2.f -3, carTexture.getSize().x / 2.0f);
+            break;
+	case Direction::RIGHT:
+            rotation = 90;
+			offsetAdjustment = sf::Vector2f(carTexture.getSize().y / 2.f + 3, carTexture.getSize().x / 2.0f - 2);
+            break;
+    }
+
+	
+	carSprite.setRotation(rotation);
+	sf::Vector2i basePosition = sf::Vector2i(carCurrentPositionPoint.x * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness, carCurrentPositionPoint.y * 10 + settings.simulationBorderOffset + settings.simulationBorderThickness);
+	carCurrentSpritePosition = basePosition + sf::Vector2i(offsetAdjustment);
+
+	if ((carDirection == Direction::UP || carDirection == Direction::DOWN) && carCurrentPositionPoint.x % 2 == 0)
+	{
+		carCurrentSpritePosition.x += 3;
+	}
+	else if ((carDirection == Direction::LEFT || carDirection == Direction::RIGHT) && carCurrentPositionPoint.y % 2 == 0)
+	{
+		carCurrentSpritePosition.y += 3;
+	}
+	else
+	{
+		if (carDirection == Direction::UP || carDirection == Direction::DOWN)
+		{
+			carCurrentSpritePosition.x -= 2;
+		}
+		else
+		{
+			carCurrentSpritePosition.y -= 2;
+		}
+	}
+
+	carSprite.setPosition(carCurrentSpritePosition.x, carCurrentSpritePosition.y);
+}
+
+void Car::resetToNewPosition(sf::Vector2i newPosition, Direction newDirection)
+{
+	removeOutOfBoundsFromPositions();
+	outOfBounds = false;
+	carDirection = newDirection;
+	carNextDirection = newDirection;
+	carTurnDirection = Direction::RIGHT;
+	carSpeed = carOriginalSpeed;
+	isMoving = false;
+	isTurning = false;
+	isWaiting = false;
+	waitCounter = 0;
+	carFrameCount = 0;
+	rotationCount = 0;
+	carSetSpawnPosition(newPosition);
+	
+}
+
+const sf::Vector2i Car::getCarNextPositionPoint()
+{
+	return nextPositionPoint;
+}
+
+const sf::Vector2i Car::getCarCurrentPositionPoint()
+{
+	return carCurrentPositionPoint;
 }
 
 void Car::carFindNextPositionPoint()
 {
+
+	int crashDetectionRange = (int)carSpeed;
+
 	sf::Vector2i potentialNextPosition = carCurrentPositionPoint;
 	sf::Vector2i potentialNextTurnPosition = carCurrentPositionPoint;
+	sf::Vector2i potentialCrashPosition = carCurrentPositionPoint;
 	switch (carDirection)
 	{
 	case Direction::UP:
 		potentialNextPosition.y -= 1;
 		potentialNextTurnPosition.y -= 2;
+		potentialCrashPosition.y -= crashDetectionRange;
 		break;
 	case Direction::DOWN:
 		potentialNextPosition.y += 1;
 		potentialNextTurnPosition.y += 2;
+		potentialCrashPosition.y += crashDetectionRange;
 		break;
 	case Direction::LEFT:
 		potentialNextPosition.x -= 1;
 		potentialNextTurnPosition.x -= 2;
+		potentialCrashPosition.x -= crashDetectionRange;
 		break;
 	case Direction::RIGHT:
 		potentialNextPosition.x += 1;
 		potentialNextTurnPosition.x += 2;
+		potentialCrashPosition.x += crashDetectionRange;
 		break;
+	}
+
+	auto isPositionBlocked = [&](const sf::Vector2i& pos, Direction dir) {
+		for (const auto& info : nextPositions) {
+			if (info.position == pos && info.direction == dir) {
+				return true;
+			}
+		}
+		for (const auto& info : currentPositions) {
+			if (info.position == pos) {
+				return true;
+			}
+		}
+		return false;
+		};
+
+	sf::Vector2i blockageDetectedAt = sf::Vector2i(0,0); 
+	bool isBlocked = false;
+
+	if (isPositionBlocked(potentialNextPosition, carDirection))
+	{
+		blockageDetectedAt = potentialNextPosition;
+		isBlocked = true;
+	}
+	else if (isPositionBlocked(potentialNextTurnPosition, carDirection))
+	{
+		blockageDetectedAt = potentialNextTurnPosition;
+		isBlocked = true;
+	}
+	else if (isPositionBlocked(potentialCrashPosition, carDirection)) 
+	{
+		blockageDetectedAt = potentialCrashPosition;
+		isBlocked = true;
 	}
 
 	if (!(potentialNextTurnPosition.x < 0 || potentialNextTurnPosition.x >= p_roadMap->at(0).size() || potentialNextTurnPosition.y < 0 || potentialNextTurnPosition.y >= p_roadMap->size()))
 	{
-			
-		unsigned int potentialNextTurnValue = (*p_roadMap)[potentialNextTurnPosition.y][potentialNextTurnPosition.x];
-		if (turnTriggerValues.find(potentialNextTurnValue) != turnTriggerValues.end())
+		if (!(potentialNextPosition.x < 0 || potentialNextPosition.x >= p_roadMap->at(0).size() - 1 || potentialNextPosition.y < 0 || potentialNextPosition.y >= p_roadMap->size()))
 		{
-			tempDirection = chooseRandomDirection(potentialNextTurnValue);
-			if (carDirection != tempDirection)
+
+			if (!isBlocked)
 			{
-				carTurnDirection = checkCarTurnDirection(tempDirection);
-				isTurning = true;	
+				removeOutOfBoundsFromPositions();
+				unsigned int potentialNextTurnValue = (*p_roadMap)[potentialNextTurnPosition.y][potentialNextTurnPosition.x];
+				if (turnTriggerValues.find(potentialNextTurnValue) != turnTriggerValues.end())
+				{
+					tempDirection = chooseRandomDirection(potentialNextTurnValue);
+					if (carDirection != tempDirection)
+					{
+						carTurnDirection = checkCarTurnDirection(tempDirection);
+						isTurning = true;
+					}
+				}
+
+				unsigned int potentialNextValue = (*p_roadMap)[potentialNextPosition.y][potentialNextPosition.x];
+				if (roadValues.find(potentialNextValue) != roadValues.end())
+				{
+					nextPositionPoint = potentialNextPosition;
+					carPushBackNextPosition(nextPositionPoint, carSpeed, carDirection);
+					isWaiting = false;
+				}
+				else if (turnTriggerValues.find(potentialNextValue) != turnTriggerValues.end())
+				{
+					nextPositionPoint = potentialNextPosition;
+					carNextDirection = tempDirection;
+					carPushBackNextPosition(nextPositionPoint, carSpeed, carDirection);
+					isWaiting = false;
+				}
+				else
+				{
+					outOfBounds = true;
+				}
 			}
-		}
-	}
-	else
-	{
-		outOfBounds = true;
-	}
+			else
+			{
+				isWaiting = true;
+				auto slowDownSpeed = [&](const sf::Vector2i& pos) {
+					for (const auto& info : currentPositions)
+					{
+						if (info.position == pos)
+						{
+							return info.speed;
+						}
+					}
+					};
 
-
-	if (!(potentialNextPosition.x < 0 || potentialNextPosition.x >= p_roadMap->at(0).size()-1 || potentialNextPosition.y < 0 || potentialNextPosition.y >= p_roadMap->size()))
-	{
-		unsigned int potentialNextValue = (*p_roadMap)[potentialNextPosition.y][potentialNextPosition.x];
-		if (roadValues.find(potentialNextValue) != roadValues.end())
-		{
-			nextPositionPoint = potentialNextPosition;
-		}
-		else if (turnTriggerValues.find(potentialNextValue) != turnTriggerValues.end())
-		{
-			nextPositionPoint = potentialNextPosition;
-			carNextDirection = tempDirection;
+				if(slowDownSpeed(blockageDetectedAt) > 0.1) carSpeed = slowDownSpeed(blockageDetectedAt);
+			}
 		}
 		else
 		{
-			nextPositionPoint = carCurrentPositionPoint;
+			removeOutOfBoundsFromPositions();
+			outOfBounds = true;
 		}
 	}
 	else
 	{
-		nextPositionPoint = carCurrentPositionPoint;
+		removeOutOfBoundsFromPositions();
 		outOfBounds = true;
+		
 	}
 }
 
@@ -147,6 +246,35 @@ Direction Car::chooseRandomDirection(unsigned int triggerValue)
 	return newDirection;
 }
 
+const void Car::carPushBackCurrentPosition(sf::Vector2i position, float cspeed, Direction cdir)
+{
+	PositionInfo positionInfo; 
+	positionInfo.position = carCurrentPositionPoint;
+	positionInfo.speed = cspeed;
+	positionInfo.direction = cdir;
+	auto it = std::find_if(currentPositions.begin(), currentPositions.end(), [&](const PositionInfo& info) {
+		return info.position == positionInfo.position;
+		});
+	if (it == currentPositions.end())
+	{
+		currentPositions.push_back(positionInfo);
+	}
+}
+
+const void Car::carPushBackNextPosition(sf::Vector2i position, float cspeed, Direction cdir)
+{
+	PositionInfo positionInfo; 
+	positionInfo.position = nextPositionPoint;
+	positionInfo.speed = cspeed;
+	positionInfo.direction = cdir;
+	auto it = std::find_if(nextPositions.begin(), nextPositions.end(), [&](const PositionInfo& info) {
+		return info.position == positionInfo.position;
+		});
+	if (it == nextPositions.end())
+	{
+		nextPositions.push_back(positionInfo);
+	}
+}
 
 void Car::carMoveSprite()
 {
@@ -162,7 +290,6 @@ void Car::carMoveSprite()
 		int movePixels = static_cast<int>(moveStep); 
 		moveAccumulator = moveStep - movePixels; 
 
-		// Apply movement based on direction
 		if (carDirection == Direction::UP)
 		{
 			carSprite.move(0, -movePixels);
@@ -189,6 +316,7 @@ void Car::carMoveSprite()
 		sf::Vector2f pos = carSprite.getPosition();
 		if (pos.x < leftBound || pos.x > rightBound || pos.y < topBound || pos.y > bottomBound)
 		{
+			removeOutOfBoundsFromPositions();
 			outOfBounds = true;
 		}
 
@@ -247,47 +375,9 @@ void Car::carTurnSprite()
 	}
 }
 
-void Car::carAdjustSprite()
-{
-	int i = 1;
-	if (carDirection == Direction::UP)
-	{
-		carSprite.move(0, -1*(carTexture.getSize().x/2.0f) - 1);
-	}
-	else if (carDirection == Direction::DOWN)
-	{
-		carSprite.move(0, 1 * (carTexture.getSize().x / 2.0f) + 1);
-	}
-	else if (carDirection == Direction::LEFT)
-	{
-		carSprite.move(1 * (carTexture.getSize().x / 2.0f) + 1, 0);
-	}
-	else if (carDirection == Direction::RIGHT)
-	{
-		carSprite.move(-1 * (carTexture.getSize().x / 2.0f) - 1, 0);
-	}
-	needsAdjusting = false;
-	i = i*-1;
-	if (carNextDirection == Direction::DOWN && isTurning && carDirection == Direction::RIGHT)
-	{
-		carSprite.move(0, 1 * (carTexture.getSize().x / 2.0f) + 1);
-	}
-	else if (carNextDirection == Direction::RIGHT && isTurning)
-	{
-		//carSprite.move(-1 * (carTexture.getSize().x / 2.0f) + 1, 0);
-		carSprite.move(0, 1 * (carTexture.getSize().x / 2.0f) + 1);
-	}
-	else if (carNextDirection == Direction::DOWN && isTurning && carDirection == Direction::LEFT)
-	{
-		carSprite.move(-1 * (carTexture.getSize().x / 2.0f) + 1, 0);
-	}
-	else if (carNextDirection == Direction::RIGHT && isTurning && carDirection == Direction::DOWN)
-	{
-		carSprite.move(-1 * (carTexture.getSize().x / 2.0f) + 1, 0);
-	}
-}
 
-Direction Car::checkCarTurnDirection(Direction nextDir)
+
+const Direction Car::checkCarTurnDirection(Direction nextDir)
 {
 
 	if (carDirection == Direction::UP) return nextDir;
@@ -310,23 +400,41 @@ Direction Car::checkCarTurnDirection(Direction nextDir)
 	return carDirection;
 }
 
+void Car::removeOutOfBoundsFromPositions()
+{
+	nextPositions.erase(std::remove_if(nextPositions.begin(), nextPositions.end(), [&](const PositionInfo& info)
+		{ return info.position == nextPositionPoint; }), nextPositions.end());
 
+	currentPositions.erase(std::remove_if(currentPositions.begin(), currentPositions.end(), [&](const PositionInfo& info) 
+		{ return info.position == carCurrentPositionPoint; }), currentPositions.end());
+}
 
 
 void Car::update(sf::RenderWindow& window)
 {
-	if(!isMoving) carFindNextPositionPoint();
+
+	if (!isMoving && !outOfBounds)
+	{
+		carFindNextPositionPoint();
+		carPushBackCurrentPosition(carPreviousPositionPoint, carSpeed, carDirection);
+		if (!isWaiting) waitCounter++;
+		if (waitCounter > 10)
+		{
+			carSpeed = carOriginalSpeed;
+			waitCounter = 0;
+		}
+	}
 	if(!outOfBounds)
 	{
-		carMoveSprite();
-		
-		if (isTurning)
-		{
-			carTurnSprite();
-			//if (needsAdjusting) carAdjustSprite();		
-		}
-		carCurrentPositionPoint = nextPositionPoint;
+		if (!isWaiting) carMoveSprite();
+		if (isTurning && !isWaiting) carTurnSprite();
 		carDirection = carNextDirection;
+	}
+	if (!isMoving)
+	{
+		currentPositions.erase(std::remove_if(currentPositions.begin(), currentPositions.end(), [&](const PositionInfo& info)
+			{ return info.position == carCurrentPositionPoint; }), currentPositions.end());
+		carCurrentPositionPoint = nextPositionPoint;
 	}
 }
 
@@ -338,6 +446,16 @@ void Car::draw(sf::RenderWindow& window)
 sf::Sprite &Car::getCarSprite()
 {
 	return carSprite;
+}
+
+float &Car::getCarCurrentSpeed()
+{
+	return carSpeed;
+}
+
+float &Car::getCarOriginalSpeed()
+{
+	return carOriginalSpeed;
 }
 
 

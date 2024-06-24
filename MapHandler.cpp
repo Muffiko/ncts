@@ -4,7 +4,6 @@ MapHandler::MapHandler(std::string fileName)
 {
 	setMapFileName(fileName);
 	loadMapFromFile(fileName);
-    //setPossibleTurnDirections();
 }
 
 void MapHandler::setMapFileName(std::string fileName)
@@ -14,7 +13,7 @@ void MapHandler::setMapFileName(std::string fileName)
 
 std::vector<std::vector<unsigned int>> MapHandler::convertSpriteMapToRoadMap()
 {
-    RoadPatterns& roadPatterns = RoadPatterns::getInstance(); //init roadmap with 0
+    RoadPatterns& roadPatterns = RoadPatterns::getInstance(); 
     roadMap = std::vector<std::vector<unsigned int>>(spriteMap.size() * roadPatterns.patterns[static_cast<RoadTypes>(0)].size(), std::vector<unsigned int>(spriteMap[0].size() * roadPatterns.patterns[static_cast<RoadTypes>(0)].size(), 0));
     for (int i = 0; i < spriteMap.size(); i++)
     {
@@ -32,40 +31,25 @@ std::vector<std::vector<unsigned int>> MapHandler::convertSpriteMapToRoadMap()
             }
         }
     }
-    /*for (const auto& row : roadMap) {
-        for (unsigned int value : row) {
-            std::cout << value << ' ';
-        }
-        std::cout << '\n';
-    }*/
-    /*for (const auto& row : roadMap)
-    {
-        for (unsigned int value : row)
-        {
-            if (value != 0)
-            {
-                printf("%c", (char)177u);
-            }
-            else if (value == 0)
-            {
-                printf("%c", (char)178u);
-            }
-
-        }
-        std::cout << '\n';
-    }*/
     return roadMap;
 }
 
 
-void MapHandler::loadMapFromFile(std::string fileName)
+void MapHandler::loadMapFromFile(const std::string& fileName)
 {
+    if (!std::filesystem::exists(fileName))
+    {
+        std::cout << "Error: File " << fileName << " does not exist." << std::endl;
+        return;
+    }
+
     std::ifstream file(fileName);
     if (!file.is_open())
     {
         std::cout << "Error: Could not open file " << fileName << std::endl;
         return;
     }
+
     std::string line;
     while (std::getline(file, line))
     {
@@ -83,21 +67,11 @@ void MapHandler::loadMapFromFile(std::string fileName)
 
         spriteMap.push_back(row);
     }
-    std::cout << "\n";
-    for (const auto& row : spriteMap) {
-        for (unsigned int value : row) {
-            std::cout << value << ' ';
-        }
-        std::cout << '\n';
-    }
     file.close();
-
 }
 
 void MapHandler::convertSpriteMap()
 {
-    
-
 
     for (int row = 1; row < spriteMap.size()-1; row++)
     {
@@ -108,7 +82,11 @@ void MapHandler::convertSpriteMap()
             if (r(0, 0) != 0)
             {
                 if (r(0, -1) && r(0, 1) && !r(-1, 0) && !r(1, 0)) road = RoadTypes::HorizontalRoad;
+                if (!r(0, -1) && r(0, 1) && !r(-1, 0) && !r(1, 0)) road = RoadTypes::HorizontalRoad;
+                if (r(0, -1) && !r(0, 1) && !r(-1, 0) && !r(1, 0)) road = RoadTypes::HorizontalRoad;
                 if (r(-1, 0) && r(1, 0) && !r(0, -1) && !r(0, 1)) road = RoadTypes::VerticalRoad;
+                if (!r(-1, 0) && r(1, 0) && !r(0, -1) && !r(0, 1)) road = RoadTypes::VerticalRoad;
+                if (r(-1, 0) && !r(1, 0) && !r(0, -1) && !r(0, 1)) road = RoadTypes::VerticalRoad;
 
                 if (r(0, 1) && r(1, 0) && !r(-1, 0) && !r(0, -1)) road = RoadTypes::TopLeftCorner;
                 if (r(0, -1) && r(1, 0) && !r(-1, 0) && !r(0, 1)) road = RoadTypes::TopRightCorner;
@@ -122,18 +100,10 @@ void MapHandler::convertSpriteMap()
 
                 if (r(-1, 0) && r(1, 0) && r(0, -1) && r(0, 1)) road = RoadTypes::Crossroad; 
 
+
                 spriteMap[row][col] = static_cast<unsigned int>(road);
             }
         }
-    }
-    std::cout << "\n";
-    for (const auto& row : spriteMap)
-    {
-        for (unsigned int value : row)
-        {
-            std::cout << value << ' ';
-        }
-        std::cout << '\n';
     }
 
     int rows = spriteMap.size();
@@ -174,17 +144,6 @@ void MapHandler::convertSpriteMap()
             spriteMap[row][cols - 1] = spriteMap[row][cols - 2];
         }
     }
-
-    std::cout << "\n";
-    for (const auto& row : spriteMap)
-    {
-        for (unsigned int value : row)
-        {
-            std::cout << value << ' ';
-        }
-        std::cout << '\n';
-    }
-
 }
 
 void MapHandler::findCarSpawnPoints()
@@ -261,24 +220,34 @@ std::vector<std::vector<unsigned int>> MapHandler::getRoadMap()
     return roadMap;
 }
 
-void MapHandler::displayRoadMapGrid(sf::RenderWindow& window, const std::string fontPath) 
+void MapHandler::mapClear()
 {
-    const int offsetX = 53;
-    const int offsetY = 50;
-    const int cellSize = 10; 
-    sf::Font font;
-    font.loadFromFile(fontPath);
-    for (size_t y = 0; y < roadMap.size(); ++y) {
-        for (size_t x = 0; x < roadMap[y].size(); ++x) {
-            sf::Text text;
-            text.setFont(font); 
-            text.setString(std::to_string(roadMap[y][x])); 
-            text.setCharacterSize(10);
-            text.setFillColor(sf::Color::White);
-            text.setPosition(offsetX + x * cellSize, offsetY + y * cellSize); 
-            window.draw(text); 
-        }
-    }
+    spriteMap.clear();
+    roadMap.clear();
+    carSpawnPoints.clear();
+}
+
+void MapHandler::saveSpriteMapToFile(const std::string& fileName)
+{
+    std::ofstream file(fileName);
+    if (!file.is_open())
+    {
+		std::cout << "Error: Could not open file " << fileName << std::endl;
+		return;
+	}
+    for (int i = 0; i < spriteMap.size(); i++)
+    {
+        for (int j = 0; j < spriteMap[i].size(); j++)
+        {
+			file << spriteMap[i][j];
+            if (j != spriteMap[i].size() - 1)
+            {
+				file << ",";
+			}
+		}
+		file << std::endl;
+	}
+	file.close();
 }
 
 

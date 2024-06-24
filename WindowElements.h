@@ -6,8 +6,11 @@
 class WindowElements : public StaticObject
 {
 private:
-	sf::RectangleShape simulationBorder;
 	Settings& settings = Settings::getInstance();
+	sf::RectangleShape simulationBorder;
+	sf::Text scaleText;
+	sf::Text numberOfCarsText;
+	sf::Font font;
 public:
 	WindowElements();
 	~WindowElements() = default;
