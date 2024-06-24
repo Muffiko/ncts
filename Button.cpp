@@ -1,5 +1,8 @@
 #include "Button.h"
-
+#pragma warning(push)
+#pragma warning(disable: 26495)
+#pragma warning(disable: 4244)
+#pragma warning(pop)
 
 Button::Button(std::string text, std::string fontPath, sf::Vector2f position, SimulationRun* simRun) : simRun(simRun)
 {

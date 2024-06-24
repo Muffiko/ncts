@@ -108,7 +108,7 @@ const sf::Vector2i Car::getCarCurrentPositionPoint()
 void Car::carFindNextPositionPoint()
 {
 
-	int crashDetectionRange = (int)carSpeed;
+	int crashDetectionRange = 3;
 
 	sf::Vector2i potentialNextPosition = carCurrentPositionPoint;
 	sf::Vector2i potentialNextTurnPosition = carCurrentPositionPoint;

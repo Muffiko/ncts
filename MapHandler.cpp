@@ -50,23 +50,21 @@ void MapHandler::loadMapFromFile(const std::string& fileName)
         return;
     }
 
-    std::string line;
-    while (std::getline(file, line))
-    {
+    auto lines = std::ranges::istream_view<std::string>(file);
+    for (const auto& line : lines) {
         std::vector<unsigned int> row;
         std::stringstream ss(line);
         std::string cell;
-
         while (std::getline(ss, cell, ','))
         {
-            if (!cell.empty() && std::all_of(cell.begin(), cell.end(), ::isdigit))
+            if (!cell.empty() && std::ranges::all_of(cell, ::isdigit))
             {
                 row.push_back(std::stoi(cell));
             }
         }
-
         spriteMap.push_back(row);
     }
+
     file.close();
 }
 
@@ -110,24 +108,6 @@ void MapHandler::convertSpriteMap(bool fix)
     {
         int rows = spriteMap.size();
         int cols = spriteMap[0].size();
-
-        //// top border
-        //for (int col = 0; col < cols; col++)
-        //{
-        //    if (spriteMap[1][col] != 0)
-        //    {
-        //        spriteMap[0][col] = spriteMap[1][col];
-        //    }
-        //}
-
-        //// bottom border
-        //for (int col = 0; col < cols; col++)
-        //{
-        //    if (spriteMap[rows - 2][col] != 0)
-        //    {
-        //        spriteMap[rows - 1][col] = spriteMap[rows - 2][col];
-        //    }
-        //}
 
         // left border
         for (int row = 0; row < rows; row++)

@@ -1,4 +1,8 @@
 #include "SimulationRun.h"
+#pragma warning(push)
+#pragma warning(disable: 26495)
+#pragma warning(disable: 4244)
+#pragma warning(pop)
 
 std::string getRandomCarAsset();
 
@@ -101,8 +105,8 @@ void SimulationRun::createStaticObjects(std::vector<std::vector<unsigned int>> s
 
 void SimulationRun::createDynamicObjects(std::shared_ptr<std::vector<std::vector<unsigned int>>> roadMap)
 {
-	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 21), Direction::RIGHT, roadMap, 3.0f, getRandomCarAsset()));
-	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 21), Direction::RIGHT, roadMap, 6.0f, getRandomCarAsset()));
+	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(5, 21), Direction::RIGHT, roadMap, 2.0f, getRandomCarAsset()));
+	carObjects.push_back(std::make_unique<EmergencyCar>(sf::Vector2i(0, 21), Direction::RIGHT, roadMap, 4.0f, getRandomCarAsset()));
 	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(0, 21), Direction::RIGHT, roadMap, 3.0f, getRandomCarAsset()));
 	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(135, 57), Direction::LEFT, roadMap, 6.0f, getRandomCarAsset()));
 	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(135, 58), Direction::LEFT, roadMap, 6.0f, getRandomCarAsset()));
@@ -110,7 +114,6 @@ void SimulationRun::createDynamicObjects(std::shared_ptr<std::vector<std::vector
 	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(53, 79), Direction::UP, roadMap, 6.0f, getRandomCarAsset()));
 	carObjects.push_back(std::make_unique<Car>(sf::Vector2i(54, 79), Direction::UP, roadMap, 6.0f, getRandomCarAsset()));
 }
-
 
 void SimulationRun::drawStaticObjects(sf::RenderWindow& window)
 {
@@ -198,6 +201,7 @@ void SimulationRun::updateDynamicObjects(sf::RenderWindow& window, MapHandler& m
 
 void SimulationRun::createMoreCars(MapHandler& mapH)
 {
+	std::cout << "a";
 	if (carObjects.size() < numberOfCars)
 	{
 		for (int i = 0; i < numberOfCars - carObjects.size(); i++)
@@ -207,6 +211,7 @@ void SimulationRun::createMoreCars(MapHandler& mapH)
 			{
 				float randomSpeed = (rand() % 21) / 4.0f + 2.0f;
 				carObjects.push_back(std::make_unique<Car>(spawnPointAndDirection.first, spawnPointAndDirection.second, std::make_shared<std::vector<std::vector<unsigned int>>>(mapH.getRoadMap()), randomSpeed, getRandomCarAsset()));
+
 			}
 		}
 	}
@@ -389,7 +394,6 @@ void SimulationRun::mapEditorCreateRoads(std::vector<std::vector<unsigned int>> 
 	}
 }
 
-
 void SimulationRun::mapEditorCreateButtons()
 {
 	mapEditorButtons.clear();
@@ -460,6 +464,7 @@ void SimulationRun::initializeSimulation()
 
 void SimulationRun::runSimulation()
 {
+	srand(time(NULL));
 	initializeWindow();
 	while (window.isOpen())
 	{
@@ -468,9 +473,7 @@ void SimulationRun::runSimulation()
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
-
 		}
-
 		if (reloadSimulation)
 		{
 			initializeSimulation();
@@ -482,12 +485,11 @@ void SimulationRun::runSimulation()
 			mapEditorThread = std::make_unique<std::thread>(&SimulationRun::runMapEditor, this);
 			isPaused = false;
 			openMapEditor = false;
-			
 		}
 		if (mapEditorThread && mapEditorThread->joinable())
 		{
 			mapEditorThread->join();
-			mapEditorThread.release();
+			mapEditorThread.reset();
 		}
 
 		if (!isPaused)

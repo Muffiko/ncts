@@ -14,6 +14,7 @@
 #include "Car.h"
 #include "StatsDisplay.h"
 #include "TextBox.h"
+#include "EmergencyCar.h"
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include <mutex>

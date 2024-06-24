@@ -31,11 +31,8 @@ public:
     float &getCarCurrentSpeed();
     float &getCarOriginalSpeed();
     
-
-public:
     bool outOfBounds = false;
 
-public:
     static std::vector<PositionInfo> currentPositions;
     static std::vector<PositionInfo> nextPositions;
 
@@ -43,9 +40,8 @@ protected:
     RoadPatterns& roadPatterns = RoadPatterns::getInstance();
     Settings& settings = Settings::getInstance();
 
-protected:
     void carSetSpawnPosition(sf::Vector2i position);
-    void carFindNextPositionPoint();
+    virtual void carFindNextPositionPoint();
     void carMoveSprite();
     void carTurnSprite();
     const void carPushBackCurrentPosition(sf::Vector2i position, float cspeed, Direction cdir);
@@ -56,7 +52,6 @@ protected:
     Direction carTurnDirection;
     const Direction checkCarTurnDirection(Direction nextDir);
 
-protected:
     std::shared_ptr<std::vector<std::vector<unsigned int>>> p_roadMap;
     sf::Vector2i carCurrentPositionPoint;
     sf::Vector2i carCurrentSpritePosition;
@@ -78,7 +73,6 @@ protected:
     float carSlowDownSpeed = 0.5f;
     Direction tempDirection = Direction::UP;
 
-protected:
     const std::unordered_set<unsigned int> roadValues = { 1,2,3,4 };
     const std::unordered_set<unsigned int> turnTriggerValues = { 5,6,7,8,9,10,11,12 };
     

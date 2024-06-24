@@ -14,8 +14,4 @@ int main()
 {
 	SimulationRun sim;
 	sim.runSimulation();
-
-
-
-	return 0;
 }

@@ -143,10 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BasicCar.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="EmergencyCar.cpp" />
     <ClCompile Include="GraphicObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapHandler.cpp" />
@@ -160,10 +160,10 @@
     <ClCompile Include="WindowElements.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicCar.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="DynamicObject.h" />
+    <ClInclude Include="EmergencyCar.h" />
     <ClInclude Include="GraphicObject.h" />
     <ClInclude Include="MapHandler.h" />
     <ClInclude Include="Road.h" />

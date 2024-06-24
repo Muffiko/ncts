@@ -10,6 +10,7 @@
 #include "settings.h"
 #include <unordered_map> 
 #include <filesystem>
+#include <ranges>
 
 class MapHandler
 { //17x10
