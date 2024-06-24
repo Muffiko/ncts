@@ -23,7 +23,7 @@ public:
 	std::vector<std::vector<unsigned int>> convertSpriteMapToRoadMap();
 	std::vector<std::vector<unsigned int>> getSpriteMap();
 	std::vector<std::vector<unsigned int>> getRoadMap();
-	void convertSpriteMap();
+	void convertSpriteMap(bool fix);
 	void findCarSpawnPoints();
 	std::vector<sf::Vector2i> getCarSpawnPoints();
 	RoadTypes getSpriteMapRoadType(sf::Vector2i currentPos);

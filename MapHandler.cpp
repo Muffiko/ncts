@@ -70,9 +70,9 @@ void MapHandler::loadMapFromFile(const std::string& fileName)
     file.close();
 }
 
-void MapHandler::convertSpriteMap()
+void MapHandler::convertSpriteMap(bool fix)
 {
-
+    fix = true;
     for (int row = 1; row < spriteMap.size()-1; row++)
     {
         for (int col = 1; col < spriteMap[0].size()-1; col++)
@@ -106,42 +106,45 @@ void MapHandler::convertSpriteMap()
         }
     }
 
-    int rows = spriteMap.size();
-    int cols = spriteMap[0].size();
-
-    // top border
-    for (int col = 0; col < cols; col++)
+    if(fix)
     {
-        if (spriteMap[1][col] != 0)
+        int rows = spriteMap.size();
+        int cols = spriteMap[0].size();
+
+        //// top border
+        //for (int col = 0; col < cols; col++)
+        //{
+        //    if (spriteMap[1][col] != 0)
+        //    {
+        //        spriteMap[0][col] = spriteMap[1][col];
+        //    }
+        //}
+
+        //// bottom border
+        //for (int col = 0; col < cols; col++)
+        //{
+        //    if (spriteMap[rows - 2][col] != 0)
+        //    {
+        //        spriteMap[rows - 1][col] = spriteMap[rows - 2][col];
+        //    }
+        //}
+
+        // left border
+        for (int row = 0; row < rows; row++)
         {
-            spriteMap[0][col] = spriteMap[1][col];
+            if (spriteMap[row][1] != 0)
+            {
+                spriteMap[row][0] = static_cast<unsigned int>(RoadTypes::HorizontalRoad);
+            }
         }
-    }
 
-    // bottom border
-    for (int col = 0; col < cols; col++)
-    {
-        if (spriteMap[rows - 2][col] != 0)
+        // right border
+        for (int row = 0; row < rows; row++)
         {
-            spriteMap[rows - 1][col] = spriteMap[rows - 2][col];
-        }
-    }
-
-    // left border
-    for (int row = 0; row < rows; row++)
-    {
-        if (spriteMap[row][1] != 0)
-        {
-            spriteMap[row][0] = spriteMap[row][1];
-        }
-    }
-
-    // right border
-    for (int row = 0; row < rows; row++)
-    {
-        if (spriteMap[row][cols - 2] != 0)
-        {
-            spriteMap[row][cols - 1] = spriteMap[row][cols - 2];
+            if (spriteMap[row][cols - 2] != 0)
+            {
+                spriteMap[row][cols - 1] = static_cast<unsigned int>(RoadTypes::HorizontalRoad);
+            }
         }
     }
 }

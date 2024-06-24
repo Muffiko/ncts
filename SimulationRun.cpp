@@ -286,7 +286,7 @@ void SimulationRun::runMapEditor()
 	mapEditorWindow.create(sf::VideoMode(settings.windowSize.x, settings.windowSize.y), "Map Editor");
 	mapEditorWindow.setFramerateLimit(60);
 	MapHandler editorMapHandler(mapEditorFileNameLoad);
-	editorMapHandler.convertSpriteMap();
+	editorMapHandler.convertSpriteMap(true);
 	mapEditorCreateRoads(editorMapHandler.getSpriteMap());
 
 	sf::RectangleShape simulationBorder;
@@ -338,7 +338,7 @@ void SimulationRun::runMapEditor()
 				editorMapHandler.spriteMap = fakeSpriteMap;
 				editorMapHandler.saveSpriteMapToFile(mapEditorFileNameSave);
 				editorMapHandler.loadMapFromFile(mapEditorFileNameSave);
-				editorMapHandler.convertSpriteMap();
+				editorMapHandler.convertSpriteMap(false);
 				mapEditorCreateRoads(editorMapHandler.getSpriteMap());
 				for (auto& button : mapEditorButtons)
 				{
@@ -355,7 +355,7 @@ void SimulationRun::runMapEditor()
 				editorMapHandler.mapClear();
 				mapEditorFileNameSave = mapEditorFileNameLoad;
 				editorMapHandler.loadMapFromFile(mapEditorFileNameSave);
-				editorMapHandler.convertSpriteMap();
+				editorMapHandler.convertSpriteMap(false);
 				mapEditorCreateRoads(editorMapHandler.getSpriteMap());
 				for (auto& button : mapEditorButtons)
 				{
@@ -449,7 +449,7 @@ void SimulationRun::initializeSimulation()
 	
 	mapHandler.setMapFileName(mapEditorFileNameLoad); 
 	mapHandler.loadMapFromFile(mapEditorFileNameLoad);
-	mapHandler.convertSpriteMap();
+	mapHandler.convertSpriteMap(true);
 	
 	createButtonObjects();
 	createStaticObjects(mapHandler.getSpriteMap());
