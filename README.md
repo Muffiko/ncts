@@ -65,6 +65,6 @@ As this was an university project there is not "simple" way to run it. However h
 6. Open ```ncts.sln``` file and run the program with Visual Studio 2022.
 
 ## Special credits: 
-[javidx9/OneLoneCoder](https://www.youtube.com/@javidx9) - for the automatic road type detection code.<br>
+[javidx9/OneLoneCoder](https://www.youtube.com/@javidx9) - for the automatic road type detection code and excellent tutorial video.<br>
 [Aim Studios](https://aim-studios.itch.io/) - for the car sprites. 
 
