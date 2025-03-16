@@ -55,7 +55,7 @@ University project written with c++20 and sfml.
     }
 ```
 
-## Instalation
+## Installation
 As this was an university project there is not "simple" way to run it. However here are the steps and programs needed: 
 1. Install VS2022.
 2. Install ```sfml 2.6.1 64-bit``` to ```C:\sfml\SFML-2.6.1```
