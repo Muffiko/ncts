@@ -64,5 +64,7 @@ As this was an university project there is not "simple" way to run it. However h
 5. Copy sfml-audio-2.dll, sfml-graphics-2.dll, sfml-system-2.dll, sfml-window-2.dll from your ```/SFML-2.6.1/bin``` to ```/ncts-files``` directory inside the project.
 6. Open ```ncts.sln``` file and run the program with Visual Studio 2022.
 
-
+## Special credits: 
+[javidx9/OneLoneCoder](https://www.youtube.com/@javidx9) - for the automatic road type detection code.<br>
+[Aim Studios](https://aim-studios.itch.io/top-down-pi) - for the car sprites. 
 
