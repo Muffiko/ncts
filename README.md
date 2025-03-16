@@ -66,5 +66,5 @@ As this was an university project there is not "simple" way to run it. However h
 
 ## Special credits: 
 [javidx9/OneLoneCoder](https://www.youtube.com/@javidx9) - for the automatic road type detection code.<br>
-[Aim Studios](https://aim-studios.itch.io/top-down-pi) - for the car sprites. 
+[Aim Studios](https://aim-studios.itch.io/) - for the car sprites. 
 
